@@ -29,7 +29,9 @@ class Source:
 class Cleansed(Source):
     
     def drop_duplicate_values(self):
-        self.raw_df=self.raw_df.drop_duplicates(["host","timestamp","method"])
+        self.raw_df=self.raw_df.drop_duplicates(["host","timestamp","method"]).drop("row_id")
+        self.raw_df=self.raw_df.withColumn("row_id",monotonically_increasing_id())
+        self.raw_df=self.raw_df.select("row_id","host","timestamp","method","request","status_code","size","referer","user_agent")
     
     def rmv_spl_chars(self):
         # Remove any special characters in the request column(% ,- ? =)
